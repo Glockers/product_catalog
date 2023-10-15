@@ -9,6 +9,7 @@ import { dataSourceOptions } from '../db/typeorm.config';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigValidationSchemas } from './schemas';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { ConfigValidationSchemas } from './schemas';
         federation: 2
       }
     }),
-    UsersModule
+    UsersModule,
+    AuthModule
   ]
 })
 export class AppModule {}

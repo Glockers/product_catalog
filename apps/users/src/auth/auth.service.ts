@@ -26,6 +26,23 @@ export class AuthService {
     this.RT_SECRET = this.configService.get<string>('SECRET_JWT_REFRESH');
   }
 
+  async signup(user: CreateUserInput) {
+    const selectedUser = await this.userService.findOneByLogin(user.login);
+    if (selectedUser) {
+      throw new ConflictException('USER ALREADY REG');
+    }
+
+    const hash = await this.hashData(user.password);
+    const createdUser = await this.userService.create({
+      ...user,
+      password: hash
+    });
+
+    const tokens = await this.getTokens(createdUser.id);
+    await this.updateRtHash(createdUser.id, tokens.refresh_token);
+    return createdUser;
+  }
+
   async login(user: LoginUserInput) {
     const selectedUser = await this.userService.findOneByLogin(user.login);
     if (!selectedUser) throw new ForbiddenException('not correct login');
@@ -42,27 +59,6 @@ export class AuthService {
     const tokens = {} as Tokens;
 
     return tokens;
-  }
-
-  async register(user: CreateUserInput) {
-    const selectedUser = this.userService.findOneByLogin(user.login);
-    if (selectedUser) {
-      throw new ConflictException('USER ALREADY REG');
-    }
-
-    const hash = await this.hashData(user.password);
-    const createdUser = await this.userService.create({
-      ...user,
-      password: hash
-    });
-
-    const tokens = await this.getTokens(createdUser.id);
-    await this.updateRtHash(createdUser.id, tokens.refresh_token);
-    return createdUser;
-  }
-
-  async hashData(data: string): Promise<string> {
-    return await bcrypt.hash(data, 10);
   }
 
   async getTokens(id: number): Promise<Tokens> {
@@ -94,7 +90,11 @@ export class AuthService {
 
   async updateRtHash(id: number, rt: string) {
     const selecteduser = await this.userService.findOneById(id);
-    selecteduser.hashedRt = rt;
+    selecteduser.hashedRt = await this.hashData(rt);
     await this.userService.create(selecteduser);
+  }
+
+  async hashData(data: string): Promise<string> {
+    return await bcrypt.hash(data, 10);
   }
 }
