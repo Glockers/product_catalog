@@ -1,16 +1,16 @@
 import {
   ConflictException,
   ForbiddenException,
-  Injectable
+  Injectable,
+  UnauthorizedException
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { CreateUserInput } from '../users/dto/create-user.input';
 import * as bcrypt from 'bcrypt';
-import { LoginUserInput } from './dto/auth.input';
-import { Tokens } from './types/tokens.type';
+import { TokenTypeEnum, Tokens } from './types/tokens.type';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { AT_EXPIRES, RT_EXPIRES } from './constants/jwt';
+import { AT_EXPIRES, RT_EXPIRES } from './constants';
+import { LoginUserInput, SignUpInput } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +26,7 @@ export class AuthService {
     this.RT_SECRET = this.configService.get<string>('SECRET_JWT_REFRESH');
   }
 
-  async signup(user: CreateUserInput) {
+  async signup(user: SignUpInput) {
     const selectedUser = await this.userService.findOneByLogin(user.login);
     if (selectedUser) {
       throw new ConflictException('USER ALREADY REG');
@@ -55,9 +55,9 @@ export class AuthService {
     if (!passwordMatched)
       throw new ForbiddenException('not correct login or password');
 
-    // Mock data. Replace
-    const tokens = {} as Tokens;
+    const tokens = await this.getTokens(selectedUser.id);
 
+    await this.updateRtHash(selectedUser.id, tokens.refresh_token);
     return tokens;
   }
 
@@ -86,6 +86,22 @@ export class AuthService {
       access_token: at,
       refresh_token: rt
     };
+  }
+
+  async verifyToken(token: string, typeToken: TokenTypeEnum): Promise<any> {
+    const secret =
+      TokenTypeEnum.ACCESS_TOKEN === typeToken
+        ? this.AT_SECRET
+        : this.RT_SECRET;
+    const { id } = await this.jwtService.verifyAsync<any>(token, {
+      secret: secret
+    });
+
+    const selectedUser = this.userService.findOneById(id);
+
+    if (!selectedUser) throw new UnauthorizedException();
+
+    return { id };
   }
 
   async updateRtHash(id: number, rt: string) {

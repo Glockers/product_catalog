@@ -8,12 +8,3 @@ export class SignUpInput {
   @Field()
   password: string;
 }
-
-@InputType()
-export class LoginUserInput {
-  @Field()
-  login: string;
-
-  @Field()
-  password: string;
-}

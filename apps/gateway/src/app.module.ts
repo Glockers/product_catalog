@@ -8,6 +8,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { GATEWAY_ENV_PATH } from './constants';
 import { ConfigValidationSchemas } from './schemas';
 import { subgraphsPath } from './constants/subgraphs';
+import { GraphQLDataSource } from './graphql-data-source';
 
 @Module({
   imports: [
@@ -19,9 +20,10 @@ import { subgraphsPath } from './constants/subgraphs';
     GraphQLModule.forRoot<ApolloGatewayDriverConfig>({
       driver: ApolloGatewayDriver,
       server: {
-        context: () => {}
+        context: ({ req, res }) => ({ req, res })
       },
       gateway: {
+        buildService: (args) => new GraphQLDataSource(args),
         supergraphSdl: new IntrospectAndCompose({
           subgraphs: subgraphsPath
         })

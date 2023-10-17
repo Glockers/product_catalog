@@ -23,6 +23,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
+      context: ({ req, res }) => ({ req, res }),
       autoSchemaFile: {
         federation: 2
       }

@@ -6,9 +6,17 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AtStrategy, RtStrategy } from './strategy';
 import { AuthService } from './auth.service';
+import { SessionSerializer } from './session.serializer';
 
 @Module({
-  imports: [UsersModule, PassportModule, JwtModule.register({})],
-  providers: [AuthResolver, AuthService, UsersResolver, RtStrategy, AtStrategy]
+  imports: [UsersModule, PassportModule.register({ session: true }), JwtModule],
+  providers: [
+    AuthResolver,
+    AuthService,
+    UsersResolver,
+    RtStrategy,
+    AtStrategy,
+    SessionSerializer
+  ]
 })
 export class AuthModule {}
