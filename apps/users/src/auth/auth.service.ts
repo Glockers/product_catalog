@@ -1,30 +1,20 @@
 import {
   ConflictException,
   ForbiddenException,
-  Injectable,
-  UnauthorizedException
+  Injectable
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { TokenTypeEnum, Tokens } from './types/tokens.type';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { AT_EXPIRES, RT_EXPIRES } from './constants';
 import { LoginUserInput, SignUpInput } from './dto';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class AuthService {
-  private readonly AT_SECRET: string;
-  private readonly RT_SECRET: string;
-
   constructor(
-    private userService: UsersService,
-    private jwtService: JwtService,
-    private configService: ConfigService
-  ) {
-    this.AT_SECRET = this.configService.get<string>('SECRET_JWT_ACCESS');
-    this.RT_SECRET = this.configService.get<string>('SECRET_JWT_REFRESH');
-  }
+    private readonly userService: UsersService,
+    private readonly tokenService: TokenService
+  ) {}
 
   async signup(user: SignUpInput) {
     const selectedUser = await this.userService.findOneByLogin(user.login);
@@ -38,8 +28,8 @@ export class AuthService {
       password: hash
     });
 
-    const tokens = await this.getTokens(createdUser.id);
-    await this.updateRtHash(createdUser.id, tokens.refresh_token);
+    const tokens = await this.tokenService.getTokens(createdUser.id);
+    await this.tokenService.updateRtHash(createdUser.id, tokens.refresh_token);
     return createdUser;
   }
 
@@ -55,59 +45,19 @@ export class AuthService {
     if (!passwordMatched)
       throw new ForbiddenException('not correct login or password');
 
-    const tokens = await this.getTokens(selectedUser.id);
+    const tokens = await this.tokenService.getTokens(selectedUser.id);
 
-    await this.updateRtHash(selectedUser.id, tokens.refresh_token);
+    await this.tokenService.updateRtHash(selectedUser.id, tokens.refresh_token);
     return tokens;
   }
 
-  async getTokens(id: number): Promise<Tokens> {
-    const [at, rt] = await Promise.all([
-      this.jwtService.signAsync(
-        {
-          id
-        },
-        {
-          secret: this.AT_SECRET,
-          expiresIn: AT_EXPIRES
-        }
-      ),
-      this.jwtService.signAsync(
-        {
-          id
-        },
-        {
-          secret: this.RT_SECRET,
-          expiresIn: RT_EXPIRES
-        }
-      )
-    ]);
-    return {
-      access_token: at,
-      refresh_token: rt
-    };
-  }
+  async logout(tokens: Tokens) {
+    const { id } = await this.tokenService.verifyToken(
+      tokens.access_token,
+      TokenTypeEnum.ACCESS_TOKEN
+    );
 
-  async verifyToken(token: string, typeToken: TokenTypeEnum): Promise<any> {
-    const secret =
-      TokenTypeEnum.ACCESS_TOKEN === typeToken
-        ? this.AT_SECRET
-        : this.RT_SECRET;
-    const { id } = await this.jwtService.verifyAsync<any>(token, {
-      secret: secret
-    });
-
-    const selectedUser = this.userService.findOneById(id);
-
-    if (!selectedUser) throw new UnauthorizedException();
-
-    return { id };
-  }
-
-  async updateRtHash(id: number, rt: string) {
-    const selecteduser = await this.userService.findOneById(id);
-    selecteduser.hashedRt = await this.hashData(rt);
-    await this.userService.create(selecteduser);
+    return await this.userService.resetRt(id);
   }
 
   async hashData(data: string): Promise<string> {

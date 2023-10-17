@@ -7,7 +7,7 @@ import { Request, Response } from 'express';
 import { HttpStatus, UseGuards } from '@nestjs/common';
 import { NAME_JWT_COOKIE } from './constants';
 import { MessageResponse } from './responses/message.response';
-import { JwtAuthGuard } from './guards/authenticated.guard';
+import { JwtAuthGuard } from ' /shared/guards';
 
 @Resolver(() => User)
 export class AuthResolver {
@@ -46,6 +46,17 @@ export class AuthResolver {
     } catch (err) {
       throw err;
     }
+  }
+
+  @Mutation(() => MessageResponse)
+  @UseGuards(JwtAuthGuard)
+  async logout(
+    @Context('req') request: Request,
+    @Context('res') response: Response
+  ): Promise<MessageResponse> {
+    await this.authService.logout(request.cookies.jwt_token);
+    response.clearCookie(NAME_JWT_COOKIE);
+    return { message: 'user was logout', status: 200 };
   }
 
   @Query(() => MessageResponse)
