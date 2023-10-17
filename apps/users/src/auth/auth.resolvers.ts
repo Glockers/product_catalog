@@ -5,9 +5,9 @@ import { AuthenticationError } from '@nestjs/apollo';
 import { LoginUserInput, SignUpInput } from './dto';
 import { Request, Response } from 'express';
 import { HttpStatus, UseGuards } from '@nestjs/common';
-import { JWT_COOKIE } from './constants';
-import { MessageResponse } from './response/message.response';
-import { JwtAuthGuard } from './authenticated.guard';
+import { NAME_JWT_COOKIE } from './constants';
+import { MessageResponse } from './responses/message.response';
+import { JwtAuthGuard } from './guards/authenticated.guard';
 
 @Resolver(() => User)
 export class AuthResolver {
@@ -24,7 +24,7 @@ export class AuthResolver {
         throw new AuthenticationError(
           'Could not log-in with the provided credentials'
         );
-      response.cookie(JWT_COOKIE, tokens);
+      response.cookie(NAME_JWT_COOKIE, tokens);
       return {
         status: HttpStatus.OK,
         message: 'User was auth'
@@ -48,11 +48,11 @@ export class AuthResolver {
     }
   }
 
-  @Query(() => String)
+  @Query(() => MessageResponse)
   @UseGuards(JwtAuthGuard)
-  async protected(@Context('req') request: Request) {
+  async protected(@Context('req') request: Request): Promise<MessageResponse> {
     console.log(request.session.id);
 
-    return 'test';
+    return { message: 'private route', status: 200 };
   }
 }

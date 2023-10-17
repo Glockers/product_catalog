@@ -4,18 +4,22 @@ import { ConfigService } from '@nestjs/config';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import * as cookieParser from 'cookie-parser';
+import {
+  NAME_SESSION_COOKIE,
+  MAXAGE_SESSION_COOKIE
+} from './constants/session';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   app.use(
     session({
-      name: 'SESSION_COOKIE',
-      secret: 'session-secret',
+      name: NAME_SESSION_COOKIE,
+      secret: configService.get<string>('SESSION_SECRET'),
       resave: false,
       saveUninitialized: true,
       cookie: {
-        maxAge: 60000
+        maxAge: MAXAGE_SESSION_COOKIE
       }
     })
   );

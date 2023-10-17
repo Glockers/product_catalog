@@ -16,5 +16,6 @@ export const configValidationSchemaDatabase = Joi.object({
 
 export const configValidationSchemaJWT = Joi.object({
   SECRET_JWT_ACCESS: Joi.string().required(),
-  SECRET_JWT_REFRESH: Joi.string().required()
+  SECRET_JWT_REFRESH: Joi.string().required(),
+  SESSION_SECRET: Joi.string().required()
 });
