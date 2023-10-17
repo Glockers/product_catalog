@@ -4,9 +4,10 @@ import { AuthService } from './auth.service';
 import { AuthenticationError } from '@nestjs/apollo';
 import { LoginUserInput, SignUpInput } from './dto';
 import { Request, Response } from 'express';
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus, UseGuards } from '@nestjs/common';
 import { JWT_COOKIE } from './constants';
 import { MessageResponse } from './response/message.response';
+import { JwtAuthGuard } from './authenticated.guard';
 
 @Resolver(() => User)
 export class AuthResolver {
@@ -48,7 +49,7 @@ export class AuthResolver {
   }
 
   @Query(() => String)
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async protected(@Context('req') request: Request) {
     console.log(request.session.id);
 

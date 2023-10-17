@@ -12,9 +12,11 @@ const exctractCookie = (request: Request): Tokens => {
 };
 
 export const exctractAtFromCookie = (request: Request): string => {
-  return exctractCookie(request).access_token;
+  const res = exctractCookie(request)?.access_token;
+  console.log('exctractAtFromCookie');
+  return res;
 };
 
 export const exctractRtFromCookie = (request: Request): string => {
-  return exctractCookie(request).refresh_token;
+  return exctractCookie(request)?.refresh_token;
 };

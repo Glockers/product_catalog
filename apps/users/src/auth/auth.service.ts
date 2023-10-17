@@ -68,7 +68,7 @@ export class AuthService {
           id
         },
         {
-          secret: this.AT_SECRET,
+          secret: 'at_secret',
           expiresIn: AT_EXPIRES
         }
       ),
@@ -77,7 +77,7 @@ export class AuthService {
           id
         },
         {
-          secret: this.RT_SECRET,
+          secret: 'at_secret',
           expiresIn: RT_EXPIRES
         }
       )

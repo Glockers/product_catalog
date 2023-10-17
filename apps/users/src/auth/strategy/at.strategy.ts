@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { exctractAtFromCookie } from '../helpers/extractor-jwt';
@@ -8,15 +8,13 @@ export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
       ignoreExpiration: false,
-      secretOrKey: 'at-secret',
+      secretOrKey: 'at_secret',
       jwtFromRequest: ExtractJwt.fromExtractors([exctractAtFromCookie])
     });
   }
 
-  async validate(payload: any) {
-    if (payload === null) {
-      throw new UnauthorizedException();
-    }
+  async validate(payload) {
+    console.log(payload);
     return payload;
   }
 }
