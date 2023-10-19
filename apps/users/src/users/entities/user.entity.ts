@@ -1,3 +1,4 @@
+import { Role } from '@app/common/constants';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -15,4 +16,7 @@ export class User {
   @Field()
   @Column({ type: 'text' })
   password: string;
+
+  @Column({ default: Role.User, type: 'text' })
+  role: Role;
 }

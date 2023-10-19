@@ -8,8 +8,10 @@ import { Response } from 'express';
 import { HttpStatus, UseGuards } from '@nestjs/common';
 import { NAME_JWT_COOKIE } from './constants';
 import { MessageResponse } from './responses/message.response';
-import { JwtAuthGuard } from ' /shared/guards';
 import { Tokens } from './types';
+import { JwtAuthGuard } from '@app/common';
+import { Roles, RolesGuard } from '@app/common/auth';
+import { Role } from '@app/common/constants';
 
 @Resolver(() => User)
 export class AuthResolver {
@@ -87,7 +89,8 @@ export class AuthResolver {
   }
 
   @Query(() => MessageResponse)
-  @UseGuards(JwtAuthGuard)
+  @Roles(Role.User)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async protected(
     @Cookie(NAME_JWT_COOKIE) cookie: Tokens
   ): Promise<MessageResponse> {
