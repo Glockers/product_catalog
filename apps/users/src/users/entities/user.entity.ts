@@ -15,7 +15,4 @@ export class User {
   @Field()
   @Column({ type: 'text' })
   password: string;
-
-  @Column({ type: 'text', nullable: true })
-  hashedRt: string;
 }

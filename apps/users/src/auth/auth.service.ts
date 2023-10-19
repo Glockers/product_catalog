@@ -8,15 +8,20 @@ import * as bcrypt from 'bcrypt';
 import { TokenTypeEnum, Tokens } from './types/tokens.type';
 import { LoginUserInput, SignUpInput } from './dto';
 import { TokenService } from './token.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AuthSession } from './entities/auth.entity';
+import { IsNull, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
-    private readonly tokenService: TokenService
+    private readonly tokenService: TokenService,
+    @InjectRepository(AuthSession)
+    private authSessionRepository: Repository<AuthSession>
   ) {}
 
-  async signup(user: SignUpInput) {
+  async signup(user: SignUpInput): Promise<Tokens> {
     const selectedUser = await this.userService.findOneByLogin(user.login);
     if (selectedUser) {
       throw new ConflictException('USER ALREADY REG');
@@ -29,8 +34,8 @@ export class AuthService {
     });
 
     const tokens = await this.tokenService.getTokens(createdUser.id);
-    await this.tokenService.updateRtHash(createdUser.id, tokens.refresh_token);
-    return createdUser;
+    await this.saveRefreshToken(createdUser.id, tokens.refresh_token);
+    return tokens;
   }
 
   async login(user: LoginUserInput) {
@@ -47,7 +52,7 @@ export class AuthService {
 
     const tokens = await this.tokenService.getTokens(selectedUser.id);
 
-    await this.tokenService.updateRtHash(selectedUser.id, tokens.refresh_token);
+    await this.saveRefreshToken(selectedUser.id, tokens.refresh_token);
     return tokens;
   }
 
@@ -57,10 +62,66 @@ export class AuthService {
       TokenTypeEnum.ACCESS_TOKEN
     );
 
-    return await this.userService.resetRt(id);
+    return await this.resetRefreshToken(id);
   }
 
-  async hashData(data: string): Promise<string> {
+  async updatehAccessToken(rt: string): Promise<Tokens> {
+    const { id } = await this.tokenService.verifyToken(
+      rt,
+      TokenTypeEnum.REFRESH_TOKEN
+    );
+
+    const newTokens = await this.tokenService.getTokens(id);
+
+    return {
+      access_token: newTokens.access_token,
+      refresh_token: rt
+    };
+  }
+
+  async updateRefreshToken(rt: string) {
+    const { id } = await this.verfifyRefreshToken(rt);
+    const newTokens = await this.tokenService.getTokens(id);
+    await this.saveRefreshToken(id, newTokens.refresh_token);
+    return newTokens;
+  }
+
+  async verfifyRefreshToken(rt: string) {
+    const isExistRt = await this.checkIfRtIsWhiteListed(rt);
+
+    if (!isExistRt) throw new ConflictException('Not correct refresh token');
+
+    return await this.tokenService.verifyToken(rt, TokenTypeEnum.REFRESH_TOKEN);
+  }
+
+  async checkIfRtIsWhiteListed(rt: string): Promise<boolean> {
+    const rtRecord = await this.authSessionRepository.findOneBy({
+      hashedRt: rt
+    });
+
+    if (!rtRecord) false;
+    return true;
+  }
+
+  private async resetRefreshToken(id: number) {
+    await this.authSessionRepository.update(
+      {
+        id,
+        hashedRt: Not(IsNull())
+      },
+      {
+        hashedRt: null
+      }
+    );
+  }
+
+  private async saveRefreshToken(id: number, rt: string) {
+    const selecteduser = await this.userService.findOneById(id);
+    const createdEntity = { user: selecteduser, hashedRt: rt };
+    await this.authSessionRepository.save(createdEntity);
+  }
+
+  private async hashData(data: string): Promise<string> {
     return await bcrypt.hash(data, 10);
   }
 }

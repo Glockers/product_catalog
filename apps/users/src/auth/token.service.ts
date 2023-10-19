@@ -52,7 +52,7 @@ export class TokenService {
       TokenTypeEnum.ACCESS_TOKEN === typeToken
         ? this.AT_SECRET
         : this.RT_SECRET;
-    const { id } = await this.jwtService.verifyAsync<any>(token, {
+    const { id } = await this.jwtService.verifyAsync(token, {
       secret: secret
     });
 
@@ -61,12 +61,6 @@ export class TokenService {
     if (!selectedUser) throw new UnauthorizedException();
 
     return { id };
-  }
-
-  async updateRtHash(id: number, rt: string) {
-    const selecteduser = await this.userService.findOneById(id);
-    selecteduser.hashedRt = await this.hashData(rt);
-    await this.userService.create(selecteduser);
   }
 
   async hashData(data: string): Promise<string> {

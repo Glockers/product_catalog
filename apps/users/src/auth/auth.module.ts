@@ -7,9 +7,16 @@ import { PassportModule } from '@nestjs/passport';
 import { AtStrategy } from './strategies';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthSession } from './entities/auth.entity';
 
 @Module({
-  imports: [UsersModule, PassportModule.register({ session: true }), JwtModule],
+  imports: [
+    TypeOrmModule.forFeature([AuthSession]),
+    UsersModule,
+    PassportModule.register({ session: true }),
+    JwtModule
+  ],
   providers: [
     AuthResolver,
     AuthService,

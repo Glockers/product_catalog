@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -12,8 +12,7 @@ export class UsersService {
   ) {}
 
   async create(createUserInput: CreateUserInput) {
-    const createdUser = await this.userRepository.save(createUserInput);
-    return createdUser;
+    return await this.userRepository.save(createUserInput);
   }
 
   async findAll() {
@@ -32,15 +31,15 @@ export class UsersService {
     });
   }
 
-  async resetRt(id: number) {
-    await this.userRepository.update(
-      {
-        id,
-        hashedRt: Not(IsNull())
-      },
-      {
-        hashedRt: null
-      }
-    );
-  }
+  // async resetRt(id: number) {
+  //   await this.userRepository.update(
+  //     {
+  //       id,
+  //       hashedRt: Not(IsNull())
+  //     },
+  //     {
+  //       hashedRt: null
+  //     }
+  //   );
+  // }
 }
