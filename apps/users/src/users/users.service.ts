@@ -30,16 +30,4 @@ export class UsersService {
       login
     });
   }
-
-  // async resetRt(id: number) {
-  //   await this.userRepository.update(
-  //     {
-  //       id,
-  //       hashedRt: Not(IsNull())
-  //     },
-  //     {
-  //       hashedRt: null
-  //     }
-  //   );
-  // }
 }

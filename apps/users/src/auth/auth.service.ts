@@ -106,7 +106,7 @@ export class AuthService {
   private async resetRefreshToken(id: number) {
     await this.authSessionRepository.update(
       {
-        id,
+        user: { id },
         hashedRt: Not(IsNull())
       },
       {
@@ -116,9 +116,12 @@ export class AuthService {
   }
 
   private async saveRefreshToken(id: number, rt: string) {
-    const selecteduser = await this.userService.findOneById(id);
-    const createdEntity = { user: selecteduser, hashedRt: rt };
-    await this.authSessionRepository.save(createdEntity);
+    return await this.authSessionRepository.update(
+      { user: { id } },
+      {
+        hashedRt: rt
+      }
+    );
   }
 
   private async hashData(data: string): Promise<string> {
