@@ -1,20 +1,19 @@
 import { Module } from '@nestjs/common';
-import { ProductService } from './product.service';
-import { ProductResolver } from './product.resolver';
+import { ConfigModule } from '@nestjs/config';
+import { ENV_PATH } from './products/constants';
+import { ConfigValidationSchemas } from './products/schemas';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import {
   ApolloFederationDriver,
   ApolloFederationDriverConfig
 } from '@nestjs/apollo';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from '../db/typeorm.config';
-import { Product } from './entities/product.entity';
-import { ConfigModule } from '@nestjs/config';
-import { ConfigValidationSchemas } from './schemas';
-import { ENV_PATH } from './constants';
+import { ProductModule } from './products/product.module';
 
 @Module({
   imports: [
+    ProductModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ENV_PATH,
@@ -23,14 +22,12 @@ import { ENV_PATH } from './constants';
     TypeOrmModule.forRootAsync({
       useFactory: () => dataSourceOptions
     }),
-    TypeOrmModule.forFeature([Product]),
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
       autoSchemaFile: {
         federation: 2
       }
     })
-  ],
-  providers: [ProductResolver, ProductService]
+  ]
 })
-export class CatalogModule {}
+export class AppModule {}

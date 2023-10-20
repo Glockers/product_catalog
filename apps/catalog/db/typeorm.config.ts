@@ -1,6 +1,7 @@
 import { config as dotenvConfig } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { Product } from '../src/entities/product.entity';
+import { Product } from '../src/products/entities/product.entity';
+// import { Product } from '../src/entities/product.entity';
 
 dotenvConfig({ path: './apps/catalog/.env' });
 
