@@ -11,7 +11,7 @@ import { DeleteProductCommand } from './commands/impl/delete-product.command';
 export class ProductService {
   constructor(
     private readonly commandBus: CommandBus,
-    private readonly queryBus: QueryBus // @InjectRepository(Product)
+    private readonly queryBus: QueryBus
   ) {}
 
   create(createCatalogInput: CreateProductInput) {

@@ -35,7 +35,7 @@ export class ProductResolver {
   // }
 
   @Mutation(() => Product)
-  removeProduct(@Args('id', { type: () => Int }) id: number) {
-    return this.productService.remove(id);
+  async removeProduct(@Args('id', { type: () => Int }) id: number) {
+    return await this.productService.remove(id);
   }
 }

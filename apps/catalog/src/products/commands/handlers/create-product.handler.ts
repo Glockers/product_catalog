@@ -4,14 +4,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '../../entities/product.entity';
 import { Repository } from 'typeorm';
 import { ProductCreatedEvent } from '../../events/impl/product-created.event';
+import { IEventPublisher } from '../../types';
 
 @CommandHandler(CreateProductCommand)
 export class CreateProductHandler
-  implements ICommandHandler<CreateProductCommand>
+  implements ICommandHandler<CreateProductCommand>, IEventPublisher
 {
   constructor(
     @InjectRepository(Product)
-    private productRepository: Repository<Product>,
+    private readonly productRepository: Repository<Product>,
     private readonly eventBus: EventBus
   ) {}
 
@@ -23,10 +24,6 @@ export class CreateProductHandler
   }
 
   async sendEvent(product) {
-    try {
-      this.eventBus.publish(new ProductCreatedEvent(product));
-    } catch (err) {
-      console.log('werwerwerwer');
-    }
+    this.eventBus.publish(new ProductCreatedEvent(product));
   }
 }

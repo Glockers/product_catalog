@@ -5,7 +5,7 @@ import { Product } from '../../entities/product.entity';
 import { Repository } from 'typeorm';
 
 @QueryHandler(ProductsQuery)
-export class CampersHandler implements IQueryHandler<ProductsQuery> {
+export class ProductsQueryHandler implements IQueryHandler<ProductsQuery> {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>
