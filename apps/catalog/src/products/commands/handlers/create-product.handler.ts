@@ -1,8 +1,9 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { CreateProductCommand } from '../impl/create-product.command';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '../../entities/product.entity';
 import { Repository } from 'typeorm';
+import { ProductCreatedEvent } from '../../events/impl/product-created.event';
 
 @CommandHandler(CreateProductCommand)
 export class CreateProductHandler
@@ -10,14 +11,22 @@ export class CreateProductHandler
 {
   constructor(
     @InjectRepository(Product)
-    private productRepository: Repository<Product>
+    private productRepository: Repository<Product>,
+    private readonly eventBus: EventBus
   ) {}
 
-  async execute(createProductCommand: CreateProductCommand): Promise<void> {
+  async execute(createProductCommand: CreateProductCommand) {
     const { createProductInput } = createProductCommand;
-    await this.productRepository.save(createProductInput);
+    const product = await this.productRepository.save(createProductInput);
+    this.sendEvent(product);
+    return product;
   }
 
-  // TODO
-  async sendEvent() {}
+  async sendEvent(product) {
+    try {
+      this.eventBus.publish(new ProductCreatedEvent(product));
+    } catch (err) {
+      console.log('werwerwerwer');
+    }
+  }
 }

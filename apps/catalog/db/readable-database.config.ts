@@ -17,6 +17,8 @@ export const dataSourceOptions: DataSourceOptions = {
   synchronize: true
 };
 
-const dataSourse = new DataSource(dataSourceOptions as DataSourceOptions);
+const readableDataSourse = new DataSource(
+  dataSourceOptions as DataSourceOptions
+);
 
-export default dataSourse;
+export default readableDataSourse;

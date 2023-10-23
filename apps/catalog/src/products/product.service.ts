@@ -4,6 +4,8 @@ import { Product } from './entities/product.entity';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateProductCommand } from './commands/impl/create-product.command';
 import { ProductsQuery } from './queries/impl/products.query';
+import { UpdateProductCommand } from './commands/impl/update-product.command';
+import { DeleteProductCommand } from './commands/impl/delete-product.command';
 
 @Injectable()
 export class ProductService {
@@ -30,8 +32,11 @@ export class ProductService {
   //   });
   // }
 
-  // async remove(id: number) {
-  //   const selectedProduct = await this.findOne(id);
-  //   return await this.productRepository.delete(selectedProduct);
-  // }
+  async remove(id: number) {
+    return await this.commandBus.execute(new DeleteProductCommand(id));
+  }
+
+  async update(id: number, data: any) {
+    return await this.commandBus.execute(new UpdateProductCommand(id, data));
+  }
 }
