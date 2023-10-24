@@ -1,7 +1,7 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { ProductCreatedEvent } from '../impl/product-created.event';
 import { InjectModel } from '@nestjs/mongoose';
-import { Product } from '../../schemas/product.schema';
+import { Product } from '../../entities/product.schema';
 import { Model } from 'mongoose';
 
 @EventsHandler(ProductCreatedEvent)

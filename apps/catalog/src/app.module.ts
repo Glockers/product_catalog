@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { ENV_PATH } from './products/constants';
-import { ConfigValidationSchemas } from './products/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ENV_PATH } from './common/constants';
+import { ConfigValidationSchemas } from './common/schemas';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import {
@@ -12,8 +12,6 @@ import { dataSourceOptions } from '../db/writable-database.config';
 import { ProductModule } from './products/product.module';
 import { MongooseModule } from '@nestjs/mongoose';
 
-const TODO =
-  'mongodb+srv://glockers:tester228@cluster0.b684ohp.mongodb.net/?retryWrites=true&w=majority';
 @Module({
   imports: [
     ProductModule,
@@ -25,7 +23,12 @@ const TODO =
     TypeOrmModule.forRootAsync({
       useFactory: () => dataSourceOptions
     }),
-    MongooseModule.forRoot(TODO),
+    MongooseModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get('MONGO_URI')
+      }),
+      inject: [ConfigService]
+    }),
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
       autoSchemaFile: {

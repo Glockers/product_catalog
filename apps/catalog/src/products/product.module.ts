@@ -10,16 +10,16 @@ import {
 } from './commands/handlers';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ProductSchema } from './entities/product.schema';
 import {
-  Product as ProductMongo,
-  ProductSchema
-} from './schemas/product.schema';
-import { ProductCreatedHandler, ProductDeleteHandler } from './events/handlers';
+  ProductCreatedHandler,
+  ProductDeleteHandler,
+  ProductUpdatedHandler
+} from './events/handlers';
 import {
   ProductsQueryHandler,
   ProductByIdQueryHandler
 } from './queries/handlers';
-import { ProductUpdatedHandler } from './events/handlers/update-product.handler';
 
 export const CommandHandlers = [
   CreateProductHandler,
@@ -37,9 +37,7 @@ export const QueryHandlers = [ProductByIdQueryHandler, ProductsQueryHandler];
   imports: [
     TypeOrmModule.forFeature([Product]),
     CqrsModule,
-    MongooseModule.forFeature([
-      { name: ProductMongo.name, schema: ProductSchema }
-    ])
+    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }])
   ],
   providers: [
     ProductResolver,

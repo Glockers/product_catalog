@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ProductByIdQuery } from '../impl';
 import { InjectModel } from '@nestjs/mongoose';
-import { Product } from '../../schemas/product.schema';
+import { Product } from '../../entities/product.schema';
 import { Model } from 'mongoose';
 
 @QueryHandler(ProductByIdQuery)
