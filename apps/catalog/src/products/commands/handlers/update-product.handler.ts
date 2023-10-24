@@ -1,8 +1,9 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '../../entities/product.entity';
 import { Repository } from 'typeorm';
 import { UpdateProductCommand } from '../impl/update-product.command';
+import { ProductUpdatedEvent } from '../../events/impl';
 
 @CommandHandler(UpdateProductCommand)
 export class UpdateProductHandler
@@ -10,14 +11,21 @@ export class UpdateProductHandler
 {
   constructor(
     @InjectRepository(Product)
-    private productRepository: Repository<Product>
+    private productRepository: Repository<Product>,
+    private readonly eventBus: EventBus
   ) {}
 
-  async execute(updateProductCommand: UpdateProductCommand): Promise<void> {
+  async execute(updateProductCommand: UpdateProductCommand) {
     const { productID, data } = updateProductCommand;
-    await this.productRepository.update({ id: productID }, { ...data });
+    const updated = await this.productRepository.update(
+      { id: productID },
+      { ...data }
+    );
+    await this.sendEvent(productID, data);
+    return updated;
   }
 
-  // TODO
-  async sendEvent() {}
+  async sendEvent(productID, data) {
+    this.eventBus.publish(new ProductUpdatedEvent(productID, data));
+  }
 }

@@ -13,7 +13,6 @@ export class ProductDeleteHandler
   ) {}
 
   async handle({ productID }: ProductDeletedByIdEvent) {
-    console.log(productID);
     return await this.productModel.deleteOne({ id: productID });
   }
 }

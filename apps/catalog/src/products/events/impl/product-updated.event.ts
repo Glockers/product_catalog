@@ -1,6 +1,4 @@
-import { IProduct } from '../../types/product.interface';
-
-type UpdatedProduct = Partial<Omit<IProduct, 'id'>>;
+import { UpdatedProduct } from '../../types/product.type';
 
 export class ProductUpdatedEvent {
   constructor(

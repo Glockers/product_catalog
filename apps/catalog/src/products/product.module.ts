@@ -5,7 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import {
   CreateProductHandler,
-  DeleteProductHandler
+  DeleteProductHandler,
+  UpdateProductHandler
 } from './commands/handlers';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -13,13 +14,24 @@ import {
   Product as ProductMongo,
   ProductSchema
 } from './schemas/product.schema';
-import { ProductCreatedHandler } from './events/handlers/product-created.handler';
-import { ProductDeleteHandler } from './events/handlers/delete-product.handler';
-import { ProductByIdQueryHandler } from './queries/handlers/product-id.handler';
+import { ProductCreatedHandler, ProductDeleteHandler } from './events/handlers';
+import {
+  ProductsQueryHandler,
+  ProductByIdQueryHandler
+} from './queries/handlers';
+import { ProductUpdatedHandler } from './events/handlers/update-product.handler';
 
-export const CommandHandlers = [CreateProductHandler, DeleteProductHandler];
-export const EventHandlers = [ProductCreatedHandler, ProductDeleteHandler];
-export const QueryHandlers = [ProductByIdQueryHandler];
+export const CommandHandlers = [
+  CreateProductHandler,
+  DeleteProductHandler,
+  UpdateProductHandler
+];
+export const EventHandlers = [
+  ProductCreatedHandler,
+  ProductDeleteHandler,
+  ProductUpdatedHandler
+];
+export const QueryHandlers = [ProductByIdQueryHandler, ProductsQueryHandler];
 
 @Module({
   imports: [
