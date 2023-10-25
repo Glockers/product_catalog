@@ -1,0 +1,27 @@
+type Product {
+  id: Int!
+  title: String!
+  description: String!
+}
+
+type User{
+  id: Int!
+  login: String!
+}
+
+type Basket {
+ user: User!
+ products: [Product!]
+}
+
+type Query {
+  basket: Basket!
+}
+
+input CreateBasketInput {
+  id: Int!
+}
+
+type Mutation {
+  createBasket(createBasketInput: CreateBasketInput!): Product!
+}
