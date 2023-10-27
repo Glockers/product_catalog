@@ -1,57 +1,61 @@
 version: '3.9'
 
 services:
-  gateway:
-    build:
-      context: .
-      dockerfile: ./apps/gateway/Dockerfile
-    env_file:
-      - ./apps/gateway/.env
-    depends_on:
-      - user
+ rabbitmq: 
+    image: rabbitmq
     ports:
-      - '3000:3000'
-  user:
-    build:
-      context: .
-      dockerfile: ./apps/users/Dockerfile
-    env_file:
-      - ./apps/users/.env
-    ports:
-      - '3001:3001'
-  catalog:
-    build:
-      context: .
-      dockerfile: ./apps/catalog/Dockerfile
-    env_file:
-      - ./apps/catalog/.env
-    ports:
-      - '3001:3001'
-  pg_user:
-    container_name: pg_user
-    build:
-      context: ./apps/users/db
-      dockerfile: Dockerfile-db
-    restart: always
-    environment:
-      - POSTGRES_DB=user
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-    volumes:
-      - user_db_data:/var/lib/postgresql/data
-  pg_catalog:
-    container_name: pg_catalog
-    build:
-      context: ./apps/catalog/db
-      dockerfile: Dockerfile-db
-    restart: always
-    environment:
-      - POSTGRES_DB=catalog
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-    volumes:
-      - catalog_db_data:/var/lib/postgresql/data
-volumes:
-  catalog_db_data:
-  kibana-data:
-  user_db_data:
+      - '5672:5672'
+  # gateway:
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/gateway/Dockerfile
+  #   env_file:
+  #     - ./apps/gateway/.env
+  #   depends_on:
+  #     - user
+  #   ports:
+  #     - '3000:3000'
+  # user:
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/users/Dockerfile
+  #   env_file:
+  #     - ./apps/users/.env
+  #   ports:
+  #     - '3001:3001'
+  # catalog:
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/catalog/Dockerfile
+  #   env_file:
+  #     - ./apps/catalog/.env
+  #   ports:
+  #     - '3001:3001'
+  # pg_user:
+  #   container_name: pg_user
+  #   build:
+  #     context: ./apps/users/db
+  #     dockerfile: Dockerfile-db
+  #   restart: always
+  #   environment:
+  #     - POSTGRES_DB=user
+  #     - POSTGRES_USER=root
+  #     - POSTGRES_PASSWORD=root
+  #   volumes:
+  #     - user_db_data:/var/lib/postgresql/data
+  # pg_catalog:
+  #   container_name: pg_catalog
+  #   build:
+  #     context: ./apps/catalog/db
+  #     dockerfile: Dockerfile-db
+  #   restart: always
+  #   environment:
+  #     - POSTGRES_DB=catalog
+  #     - POSTGRES_USER=root
+  #     - POSTGRES_PASSWORD=root
+  #   volumes:
+  #     - catalog_db_data:/var/lib/postgresql/data
+# volumes:
+#   catalog_db_data:
+#   kibana-data:
+#   user_db_data:

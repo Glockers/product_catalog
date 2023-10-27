@@ -1,27 +1,32 @@
-type Product {
-  id: Int!
-  title: String!
-  description: String!
+extend type Product @key(fields: "id"){
+  id: ID! @external
+  title: String! @external
+  description: String! @external
 }
 
-type User{
-  id: Int!
-  login: String!
+
+type Test{
+  id: ID!
+  title: String! 
+  description: String! 
 }
 
-type Basket {
- user: User!
- products: [Product!]
+type Basket @key(fields: "id"){
+ id: ID!
+ products: [Test]
 }
 
-type Query {
-  basket: Basket!
+extend type Query {
+  getBasket: Basket!
 }
 
-input CreateBasketInput {
-  id: Int!
+
+input ProductInput{
+  id: ID
 }
 
-type Mutation {
-  createBasket(createBasketInput: CreateBasketInput!): Product!
+extend type Mutation{
+  addBasket(input: ProductInput): Test
+  popBasket(input: ProductInput): Product!
 }
+

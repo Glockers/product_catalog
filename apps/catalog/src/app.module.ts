@@ -11,9 +11,11 @@ import {
 import { dataSourceOptions } from '../db/writable-database.config';
 import { ProductModule } from './products/product.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { RmqModule } from '@app/common/rmq/rmq.module';
 
 @Module({
   imports: [
+    RmqModule,
     ProductModule,
     ConfigModule.forRoot({
       isGlobal: true,

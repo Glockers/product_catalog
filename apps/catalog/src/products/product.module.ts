@@ -20,6 +20,7 @@ import {
   ProductsQueryHandler,
   ProductByIdQueryHandler
 } from './queries/handlers';
+import { ProductController } from './product.controller';
 
 export const CommandHandlers = [
   CreateProductHandler,
@@ -45,6 +46,7 @@ export const QueryHandlers = [ProductByIdQueryHandler, ProductsQueryHandler];
     ...CommandHandlers,
     ...EventHandlers,
     ...QueryHandlers
-  ]
+  ],
+  controllers: [ProductController]
 })
 export class ProductModule {}

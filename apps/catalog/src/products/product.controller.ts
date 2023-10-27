@@ -1,0 +1,11 @@
+import { Controller } from '@nestjs/common';
+import { EventPattern } from '@nestjs/microservices';
+
+@Controller()
+export class ProductController {
+  @EventPattern('product/getProductById')
+  async getProduct() {
+    console.log('fetch product');
+    return true;
+  }
+}

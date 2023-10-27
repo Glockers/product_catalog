@@ -7,6 +7,7 @@ import {
   ApolloFederationDriver,
   ApolloFederationDriverConfig
 } from '@nestjs/apollo';
+import { RmqModule } from '@app/common/rmq/rmq.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import {
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
       typePaths: ['**/*.graphql']
-    })
+    }),
+    RmqModule
   ],
   controllers: [],
   providers: []
