@@ -1,4 +1,11 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveReference
+} from '@nestjs/graphql';
 import { ProductService } from './product.service';
 import { Product } from './entities/product.entity';
 import { CreateProductInput } from './dto/create-product.input';
@@ -37,5 +44,13 @@ export class ProductResolver {
   @Query(() => Product, { name: 'product' })
   async findOne(@Args('id', { type: () => Int }) id: number) {
     return await this.productService.findOne(id);
+  }
+
+  @ResolveReference()
+  async resolveReference(referance: {
+    __typename: string;
+    id: number;
+  }): Promise<Product> {
+    return await this.productService.findOne(referance.id);
   }
 }

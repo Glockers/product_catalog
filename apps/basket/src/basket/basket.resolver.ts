@@ -1,6 +1,14 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Parent
+} from '@nestjs/graphql';
 import { BasketService } from './basket.service';
 import { CreateBasketInput } from './dto/create-basket.input';
+import { Basket } from './entities/basket.entity';
 import { IProduct } from './types';
 
 @Resolver('Basket')
@@ -8,26 +16,15 @@ export class BasketResolver {
   constructor(private readonly basketService: BasketService) {}
 
   @Mutation('addBasket')
-  create(@Args('input') createBasketInput: CreateBasketInput): IProduct {
-    this.basketService.create();
-    return {
-      id: createBasketInput.id,
-      title: 'test',
-      description: 'test description'
-    };
+  async create(@Args('input') createBasketInput: CreateBasketInput) {
+    return await this.basketService.add(createBasketInput.id);
   }
 
   @Query('getBasket')
   async findAll() {
     return {
-      id: 1,
-      products: [
-        {
-          id: 1,
-          title: 'test',
-          description: 'test'
-        }
-      ]
+      id: 5,
+      productID: 36
     };
   }
   // @Query('basket')
@@ -45,15 +42,9 @@ export class BasketResolver {
   //   return this.basketService.remove(id);
   // }
 
-  // @ResolveField('products')
-  // getProduct(@Parent() basket: Basket): IProduct[] {
-  //   console.log(basket);
-  //   return [
-  //     {
-  //       id: 1,
-  //       description: 'test2 desc',
-  //       title: 'test'
-  //     }
-  //   ];
-  // }
+  @ResolveField('products')
+  getProduct(@Parent() basket: Basket) {
+    console.log(basket);
+    return { __typename: 'Product', id: basket.productID };
+  }
 }

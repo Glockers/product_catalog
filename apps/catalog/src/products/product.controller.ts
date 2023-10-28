@@ -1,11 +1,13 @@
 import { Controller } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import { EventPattern, Payload } from '@nestjs/microservices';
+import { ProductService } from './product.service';
 
 @Controller()
 export class ProductController {
+  constructor(private productService: ProductService) {}
+
   @EventPattern('product/getProductById')
-  async getProduct() {
-    console.log('fetch product');
-    return true;
+  async getProduct(@Payload('id') id: number) {
+    return await this.productService.findOne(id);
   }
 }

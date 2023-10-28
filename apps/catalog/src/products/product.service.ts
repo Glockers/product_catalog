@@ -28,12 +28,12 @@ export class ProductService {
     );
   }
 
-  async findOne(id: number): Promise<Product> {
+  async findOne(id: number): Promise<Product> | null {
     const product = await this.queryBus.execute<ProductByIdQuery, Product>(
       new ProductByIdQuery(id)
     );
 
-    if (!product) throw new Error('Product not found');
+    if (!product) return null;
 
     return product;
   }

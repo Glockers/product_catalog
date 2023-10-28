@@ -1,19 +1,17 @@
-extend type Product @key(fields: "id"){
+extend type Product {
   id: ID! @external
-  title: String! @external
-  description: String! @external
 }
 
 
-type Test{
-  id: ID!
-  title: String! 
-  description: String! 
-}
+# type Test{
+#   id: ID!
+#   title: String! 
+#   description: String! 
+# }
 
 type Basket @key(fields: "id"){
  id: ID!
- products: [Test]
+ products: Product
 }
 
 extend type Query {
@@ -26,7 +24,7 @@ input ProductInput{
 }
 
 extend type Mutation{
-  addBasket(input: ProductInput): Test
-  popBasket(input: ProductInput): Product!
+  addBasket(input: ProductInput): Product! 
+  popBasket(input: ProductInput): Product! 
 }
 

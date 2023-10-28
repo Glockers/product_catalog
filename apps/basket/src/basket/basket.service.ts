@@ -1,68 +1,35 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UpdateBasketInput } from './dto/update-basket.input';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { IProduct } from './types';
+import { GET_PRODUCT_BY_ID } from './constant';
 
 @Injectable()
 export class BasketService {
+  basketContainer = [];
+
   constructor(@Inject('CATALOG') private productClient: ClientProxy) {}
 
   async add(productID: number): Promise<IProduct> {
     const product = await lastValueFrom(
-      this.productClient.send<IProduct>('product/getProductById', {
+      this.productClient.send<IProduct>(GET_PRODUCT_BY_ID, {
         id: productID
       })
     );
 
     if (!product) throw new Error('Product not found');
+    // Add user id
+    this.basketContainer.push(product);
     return product;
   }
 
-  async create() {
-    console.log(
-      await lastValueFrom(
-        this.productClient.send('product/getProductById', { id: 1 })
-      )
-    );
-    return {
-      id: 1,
-      title: 'test',
-      description: 'test description'
-    };
+  async getBasket(userID: number) {
+    return this.basketContainer;
   }
 
-  // findAll() {
-  //   return {
-  //     user: {
-  //       id: 1,
-  //       login: 'test'
-  //     },
-  //     products: [
-  //       {
-  //         id: 1,
-  //         title: 'test',
-  //         description: 'test description'
-  //       },
-  //       {
-  //         id: 2,
-  //         title: 'test2',
-  //         description: 'test description234'
-  //       }
-  //     ]
-  //   };
-  // }
+  async popFromBasket(productID: number) {}
 
   findOne(id: number) {
     return `This action returns a #${id} basket`;
-  }
-
-  update(id: number, updateBasketInput: UpdateBasketInput) {
-    console.log(updateBasketInput);
-    return `This action updates a #${id} basket`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} basket`;
   }
 }
