@@ -18,18 +18,16 @@ export class BasketService {
     );
 
     if (!product) throw new Error('Product not found');
-    // Add user id
+
     this.basketContainer.push(product);
     return product;
   }
 
-  async getBasket(userID: number) {
-    return this.basketContainer;
-  }
-
-  async popFromBasket(productID: number) {}
-
-  findOne(id: number) {
-    return `This action returns a #${id} basket`;
+  async getProducts(productsID: number[]) {
+    await lastValueFrom(
+      this.productClient.send<IProduct>(GET_PRODUCT_BY_ID, {
+        ids: productsID
+      })
+    );
   }
 }

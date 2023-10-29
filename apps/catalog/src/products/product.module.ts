@@ -18,7 +18,8 @@ import {
 } from './events/handlers';
 import {
   ProductsQueryHandler,
-  ProductByIdQueryHandler
+  ProductByIdQueryHandler,
+  ProductsByIdsQueryHandler
 } from './queries/handlers';
 import { ProductController } from './product.controller';
 
@@ -32,7 +33,11 @@ export const EventHandlers = [
   ProductDeleteHandler,
   ProductUpdatedHandler
 ];
-export const QueryHandlers = [ProductByIdQueryHandler, ProductsQueryHandler];
+export const QueryHandlers = [
+  ProductByIdQueryHandler,
+  ProductsQueryHandler,
+  ProductsByIdsQueryHandler
+];
 
 @Module({
   imports: [

@@ -9,7 +9,6 @@ import {
 import { BasketService } from './basket.service';
 import { CreateBasketInput } from './dto/create-basket.input';
 import { Basket } from './entities/basket.entity';
-import { IProduct } from './types';
 
 @Resolver('Basket')
 export class BasketResolver {
@@ -21,30 +20,22 @@ export class BasketResolver {
   }
 
   @Query('getBasket')
-  async findAll() {
+  async findAll(): Promise<Basket> {
     return {
-      id: 5,
-      productID: 36
+      userID: 1,
+      productsID: [36, 35, 34]
     };
   }
-  // @Query('basket')
-  // findOne(@Args('id') id: number) {
-  //   return this.basketService.findOne(id);
-  // }
-
-  // @Mutation('updateBasket')
-  // update(@Args('updateBasketInput') updateBasketInput: UpdateBasketInput) {
-  //   return this.basketService.update(updateBasketInput.id, updateBasketInput);
-  // }
-
-  // @Mutation('removeBasket')
-  // remove(@Args('id') id: number) {
-  //   return this.basketService.remove(id);
-  // }
 
   @ResolveField('products')
   getProduct(@Parent() basket: Basket) {
-    console.log(basket);
-    return { __typename: 'Product', id: basket.productID };
+    console.log('product resolver', basket.productsID);
+    return this.basketService.getProducts(basket.productsID);
+  }
+
+  @ResolveField('user')
+  getUser(@Parent() basket: Basket) {
+    console.log('user resolver', basket.userID);
+    return { __typename: 'User', id: basket.userID };
   }
 }

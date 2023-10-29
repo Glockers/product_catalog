@@ -1,3 +1,4 @@
 export class Basket {
-  productID: number;
+  userID: number;
+  productsID: number[];
 }
