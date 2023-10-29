@@ -14,6 +14,9 @@ export class ProductController {
 
   @EventPattern(GET_PRODUCTS_BY_IDs)
   async getProductsByIds(@Payload('ids') productsID: number[]) {
-    return await this.productService.findManyById(productsID);
+    console.log('test');
+    const t = await this.productService.findManyById(productsID);
+    console.log(t);
+    return t;
   }
 }

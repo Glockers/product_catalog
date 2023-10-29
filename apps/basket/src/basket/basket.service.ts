@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { IProduct } from './types';
-import { GET_PRODUCT_BY_ID } from './constant';
+import { GET_PRODUCTS_BY_IDs, GET_PRODUCT_BY_ID } from './constant';
 
 @Injectable()
 export class BasketService {
@@ -24,8 +24,8 @@ export class BasketService {
   }
 
   async getProducts(productsID: number[]) {
-    await lastValueFrom(
-      this.productClient.send<IProduct>(GET_PRODUCT_BY_ID, {
+    return await lastValueFrom(
+      this.productClient.send<IProduct>(GET_PRODUCTS_BY_IDs, {
         ids: productsID
       })
     );

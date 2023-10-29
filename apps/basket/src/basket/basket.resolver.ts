@@ -23,19 +23,17 @@ export class BasketResolver {
   async findAll(): Promise<Basket> {
     return {
       userID: 1,
-      productsID: [36, 35, 34]
+      productsID: [36, 35, 33]
     };
   }
 
   @ResolveField('products')
-  getProduct(@Parent() basket: Basket) {
-    console.log('product resolver', basket.productsID);
-    return this.basketService.getProducts(basket.productsID);
+  async getProducts(@Parent() basket: Basket) {
+    return await this.basketService.getProducts(basket.productsID);
   }
 
   @ResolveField('user')
   getUser(@Parent() basket: Basket) {
-    console.log('user resolver', basket.userID);
     return { __typename: 'User', id: basket.userID };
   }
 }

@@ -6,13 +6,6 @@ extend type User {
   id: ID! @external
 }
 
-
-# type Test{
-#   id: ID!
-#   title: String! 
-#   description: String! 
-# }
-
 type Basket{
  user: User!
  products: [Product]
