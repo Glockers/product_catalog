@@ -8,6 +8,8 @@ import {
   ApolloFederationDriverConfig
 } from '@nestjs/apollo';
 import { RmqModule } from '@app/common/rmq/rmq.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { dataSourceOptions } from '../db/typeorm.config';
 
 @Module({
   imports: [
@@ -19,11 +21,13 @@ import { RmqModule } from '@app/common/rmq/rmq.module';
     }),
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
-      typePaths: ['**/*.graphql']
+      typePaths: ['**/*.graphql'],
+      context: ({ req, res }) => ({ req, res })
+    }),
+    TypeOrmModule.forRootAsync({
+      useFactory: () => dataSourceOptions
     }),
     RmqModule
-  ],
-  controllers: [],
-  providers: []
+  ]
 })
 export class AppModule {}

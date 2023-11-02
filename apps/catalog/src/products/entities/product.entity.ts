@@ -17,4 +17,8 @@ export class Product implements IProduct {
   @Field()
   @Column({ type: 'text' })
   description: string;
+
+  @Field()
+  @Column('int')
+  price: number;
 }

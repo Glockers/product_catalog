@@ -1,15 +1,20 @@
 import { Module } from '@nestjs/common';
 import { BasketService } from './basket.service';
 import { BasketResolver } from './basket.resolver';
-import { RmqModule } from '@app/common/rmq';
-import { CATALOG } from '@app/common/constants';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Basket } from './entities/basket.entity';
+import {
+  AuthCommunicationModule,
+  CatalogCommunicationModule
+} from '@app/common/microservice';
+import { UserHelper } from '../common/helpers';
 
 @Module({
   imports: [
-    RmqModule.register({
-      name: CATALOG
-    })
+    CatalogCommunicationModule,
+    TypeOrmModule.forFeature([Basket]),
+    AuthCommunicationModule
   ],
-  providers: [BasketResolver, BasketService]
+  providers: [BasketResolver, BasketService, UserHelper]
 })
 export class BasketModule {}
