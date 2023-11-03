@@ -20,7 +20,6 @@ export class BasketService {
     if (!productInfo) throw new Error('Product not found');
 
     const userBasket = await this.getBasketById(userID);
-
     if (!userBasket)
       this.basketRepository.save({
         userID,
@@ -44,6 +43,13 @@ export class BasketService {
     return await this.basketRepository.findOneBy({
       userID
     });
+  }
+
+  async getProductsFromBasketByUserID(userID: number) {
+    const basket = await this.getBasketById(userID);
+
+    if (!basket) return [];
+    return basket.productIDs;
   }
 
   async removeProduct(userID: number, productID: number) {

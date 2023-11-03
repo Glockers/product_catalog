@@ -17,7 +17,7 @@ extend type Query {
 
 
 input ProductInput{
-  id: ID
+  id: Int!
 }
 
 extend type Mutation{

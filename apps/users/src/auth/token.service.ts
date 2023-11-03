@@ -5,6 +5,7 @@ import { TokenTypeEnum, Tokens } from './types/tokens.type';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AT_EXPIRES, RT_EXPIRES } from './constants';
+import { JwtPayload } from './types';
 
 @Injectable()
 export class TokenService {
@@ -47,12 +48,12 @@ export class TokenService {
     };
   }
 
-  async verifyToken(token: string, typeToken: TokenTypeEnum): Promise<any> {
+  async verifyToken(token: string, typeToken: TokenTypeEnum) {
     const secret =
       TokenTypeEnum.ACCESS_TOKEN === typeToken
         ? this.AT_SECRET
         : this.RT_SECRET;
-    const { id } = await this.jwtService.verifyAsync(token, {
+    const { id } = await this.jwtService.verifyAsync<JwtPayload>(token, {
       secret: secret
     });
 

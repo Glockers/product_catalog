@@ -1,3 +1,3 @@
 export const CATALOG_MICROSERVICE_NAME = 'CATALOG';
 export const BASKET = 'BASKET';
-export const AUTH_MICROSERVICE_NAME = 'AUTH';
+export const USER_MICROSERVICE_NAME = 'USER';

@@ -22,18 +22,31 @@ export class BasketResolver {
   ) {}
 
   @Mutation('addBasket')
-  async create(@Args('input') createBasketInput: CreateBasketInput) {
-    const userID = 1;
+  async create(
+    @Cookie(NAME_JWT_COOKIE) jwt: Tokens,
+    @Args('input') createBasketInput: CreateBasketInput
+  ) {
+    const userID = await this.userHelper.getUserID(jwt);
     return await this.basketService.add(userID, createBasketInput.id);
+  }
+
+  @Mutation('popBasket')
+  async pop(
+    @Cookie(NAME_JWT_COOKIE) jwt: Tokens,
+    @Args('input') basketInput: CreateBasketInput
+  ) {
+    const userID = await this.userHelper.getUserID(jwt);
+    return await this.basketService.removeProduct(userID, basketInput.id);
   }
 
   @Query('getBasket')
   async findAll(@Cookie(NAME_JWT_COOKIE) jwt: Tokens): Promise<Basket> {
     const userID = await this.userHelper.getUserID(jwt);
-    const products = [36, 35, 33];
+    const productIds =
+      await this.basketService.getProductsFromBasketByUserID(userID);
     return {
       userID: userID,
-      productIDs: products
+      productIDs: productIds
     };
   }
 

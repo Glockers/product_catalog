@@ -9,6 +9,7 @@ import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthSession } from './entities/auth.entity';
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [
@@ -23,6 +24,8 @@ import { AuthSession } from './entities/auth.entity';
     UsersResolver,
     AtStrategy,
     TokenService
-  ]
+  ],
+  controllers: [AuthController],
+  exports: [TokenService]
 })
 export class AuthModule {}
