@@ -1,9 +1,11 @@
-import { Controller } from '@nestjs/common';
+import { Controller, UseInterceptors } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { ProductService } from './product.service';
 import { GET_PRODUCTS_BY_IDs, GET_PRODUCT_BY_ID } from '../common/constants';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller()
+@UseInterceptors(CacheInterceptor)
 export class ProductController {
   constructor(private productService: ProductService) {}
 
@@ -14,9 +16,6 @@ export class ProductController {
 
   @EventPattern(GET_PRODUCTS_BY_IDs)
   async getProductsByIds(@Payload('ids') productsID: number[]) {
-    console.log('test');
-    const t = await this.productService.findManyById(productsID);
-    console.log(t);
-    return t;
+    return await this.productService.findManyById(productsID);
   }
 }

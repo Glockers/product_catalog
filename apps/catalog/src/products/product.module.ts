@@ -22,6 +22,7 @@ import {
   ProductsByIdsQueryHandler
 } from './queries/handlers';
 import { ProductController } from './product.controller';
+import { CacheModule } from '@nestjs/cache-manager';
 
 export const CommandHandlers = [
   CreateProductHandler,
@@ -43,7 +44,8 @@ export const QueryHandlers = [
   imports: [
     TypeOrmModule.forFeature([Product]),
     CqrsModule,
-    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }])
+    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
+    CacheModule.register()
   ],
   providers: [
     ProductResolver,
