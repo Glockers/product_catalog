@@ -3,19 +3,18 @@ import { IProduct } from './types';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Basket } from './entities/basket.entity';
 import { Repository } from 'typeorm';
-import { CatalogCommunicationHelper } from '@app/common/microservice';
-import { GET_PRODUCTS_BY_IDs, GET_PRODUCT_BY_ID } from '../common/constants';
+import { CatalogService } from '../services/product.service';
 
 @Injectable()
 export class BasketService {
   constructor(
-    private catalogClient: CatalogCommunicationHelper,
     @InjectRepository(Basket)
-    private basketRepository: Repository<Basket>
+    private basketRepository: Repository<Basket>,
+    private readonly catalogService: CatalogService
   ) {}
 
   async add(userID: number, productID: number): Promise<IProduct> {
-    const productInfo = await this.getProduct(productID);
+    const productInfo = await this.catalogService.getProduct(productID);
 
     if (!productInfo) throw new Error('Product not found');
 
@@ -39,6 +38,10 @@ export class BasketService {
     return productInfo;
   }
 
+  async clearBasket(userID: number) {
+    return await this.basketRepository.delete(userID);
+  }
+
   async getBasketById(userID: number): Promise<Basket> | null {
     return await this.basketRepository.findOneBy({
       userID
@@ -53,7 +56,7 @@ export class BasketService {
   }
 
   async removeProduct(userID: number, productID: number) {
-    const productInfo = await this.getProduct(productID);
+    const productInfo = await this.catalogService.getProduct(productID);
 
     if (!productInfo) throw new Error('Product not found');
 
@@ -73,20 +76,5 @@ export class BasketService {
     );
 
     return productInfo;
-  }
-
-  async getProduct(productID: number): Promise<IProduct> | null {
-    return await this.catalogClient.sentToMicroservice<IProduct>(
-      GET_PRODUCT_BY_ID,
-      {
-        id: productID
-      }
-    );
-  }
-
-  async getProducts(productsID: number[]) {
-    return await this.catalogClient.sentToMicroservice(GET_PRODUCTS_BY_IDs, {
-      ids: productsID
-    });
   }
 }

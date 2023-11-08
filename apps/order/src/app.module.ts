@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { BasketModule } from './basket/basket.module';
 import { ConfigModule } from '@nestjs/config';
-import { ENV_PATH } from './common/constants';
+import { ENV_PATH } from './constants';
+import { OrderModule } from './orders/orders.module';
+import { RmqModule } from '@app/common/rmq';
 import { GraphQLModule } from '@nestjs/graphql';
 import {
   ApolloFederationDriver,
   ApolloFederationDriverConfig
 } from '@nestjs/apollo';
-import { RmqModule } from '@app/common/rmq/rmq.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from '../db/typeorm.config';
 
@@ -20,14 +20,14 @@ import { dataSourceOptions } from '../db/typeorm.config';
     }),
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
-      typePaths: ['./**/basket.graphql'],
+      typePaths: ['./**/orders.graphql'],
       context: ({ req, res }) => ({ req, res })
     }),
     TypeOrmModule.forRootAsync({
       useFactory: () => dataSourceOptions
     }),
-    RmqModule,
-    BasketModule
+    OrderModule,
+    RmqModule
   ]
 })
 export class AppModule {}

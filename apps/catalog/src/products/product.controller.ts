@@ -1,8 +1,8 @@
 import { Controller, UseInterceptors } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { ProductService } from './product.service';
-import { GET_PRODUCTS_BY_IDs, GET_PRODUCT_BY_ID } from '../common/constants';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { GET_PRODUCTS_BY_IDs, GET_PRODUCT_BY_ID } from '@app/common/endpoints';
 
 @Controller()
 @UseInterceptors(CacheInterceptor)

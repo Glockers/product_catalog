@@ -12,13 +12,15 @@ import { Basket } from './entities/basket.entity';
 import { Cookie } from '@app/common/decorator';
 import { NAME_JWT_COOKIE } from '@app/common/constants/jwt.constants';
 import { Tokens } from 'apps/users/src/auth/types';
-import { UserHelper } from '../common/helpers';
+import { UserHelper } from '@app/common/helpers';
+import { CatalogService } from '../services/product.service';
 
 @Resolver('Basket')
 export class BasketResolver {
   constructor(
     private userHelper: UserHelper,
-    private readonly basketService: BasketService
+    private readonly basketService: BasketService,
+    private readonly catalogService: CatalogService
   ) {}
 
   @Mutation('addBasket')
@@ -52,7 +54,7 @@ export class BasketResolver {
 
   @ResolveField('products')
   async getProducts(@Parent() basket: Basket) {
-    return await this.basketService.getProducts(basket.productIDs);
+    return await this.catalogService.getProducts(basket.productIDs);
   }
 
   @ResolveField('user')

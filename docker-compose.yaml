@@ -1,10 +1,27 @@
 version: '3.9'
 
 services:
- rabbitmq: 
-    image: rabbitmq
-    ports:
-      - '5672:5672'
+  rabbitmq: 
+      image: rabbitmq
+      ports:
+        - '5672:5672'
+  # order:
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/order/Dockerfile
+  #   env_file:
+  #     - ./apps/order/.env
+  #   volumes:
+  #     - .:/app
+  #   ports:
+  #     - "3004:3004"
+  stripe:
+    image: stripe/stripe-cli:latest
+    command: listen --skip-verify --forward-to host.docker.internal:3004/stripe_webhook
+    extra_hosts:
+      - --add-host=host.docker.internal:host-gateway  
+    env_file:
+      - ./apps/order/.env
 #  redis:
 #     container_name: cache
 #     image: redis

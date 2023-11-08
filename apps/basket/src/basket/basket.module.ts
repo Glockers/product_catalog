@@ -7,7 +7,9 @@ import {
   AuthCommunicationModule,
   CatalogCommunicationModule
 } from '@app/common/microservice';
-import { UserHelper } from '../common/helpers';
+import { UserHelper } from '@app/common/helpers';
+import { CatalogService } from '../services/product.service';
+import { BasketController } from './basket.controller';
 
 @Module({
   imports: [
@@ -15,6 +17,7 @@ import { UserHelper } from '../common/helpers';
     TypeOrmModule.forFeature([Basket]),
     AuthCommunicationModule
   ],
-  providers: [BasketResolver, BasketService, UserHelper]
+  controllers: [BasketController],
+  providers: [BasketResolver, BasketService, UserHelper, CatalogService]
 })
 export class BasketModule {}

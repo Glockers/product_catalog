@@ -1,7 +1,7 @@
 import { AuthCommunicationHelper } from '@app/common/microservice';
 import { Tokens } from '@app/common/types/tokens.type';
 import { Injectable } from '@nestjs/common';
-import { GET_USER_ID } from '../constants';
+import { GET_USER_ID } from '../../../../apps/basket/src/common/constants';
 
 @Injectable()
 export class UserHelper {
