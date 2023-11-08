@@ -1,6 +1,7 @@
 import { config as dotenvConfig } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { Order } from '../src/orders/entities/order.entity';
+import { StripeEvent } from '../src/payment/entities/stripe-event.entity';
 
 dotenvConfig({ path: './apps/order/.env' });
 
@@ -11,7 +12,7 @@ export const dataSourceOptions: DataSourceOptions = {
   username: `${process.env.TYPEORM_USERNAME}`,
   password: `${process.env.TYPEORM_PASSWORD}`,
   database: `${process.env.TYPEORM_DATABASE}`,
-  entities: [Order],
+  entities: [Order, StripeEvent],
   migrations: [],
   synchronize: true
 };

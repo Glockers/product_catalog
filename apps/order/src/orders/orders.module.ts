@@ -13,6 +13,7 @@ import { CatalogService } from '../services/catalog.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { OrdersResolver } from './orders.resolver';
+import { StripeEvent } from '../payment/entities/stripe-event.entity';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { OrdersResolver } from './orders.resolver';
     CatalogCommunicationModule,
     AuthCommunicationModule,
     BasketCommunicationModule,
-    TypeOrmModule.forFeature([Order])
+    TypeOrmModule.forFeature([Order, StripeEvent])
   ],
   providers: [
     OrderService,
