@@ -10,7 +10,6 @@ export class AuthController {
 
   @EventPattern(GET_USER_ID)
   async getUserById(@Payload('tokens') tokens: Tokens) {
-    console.log('test');
     const { id } = await this.tokenService.verifyToken(
       tokens.access_token,
       TokenTypeEnum.ACCESS_TOKEN

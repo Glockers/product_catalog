@@ -24,7 +24,6 @@ export class OrderService {
   async getStripeSession(userID: number) {
     const basket = await this.basketService.getUserBasket(userID);
     const products = await this.catalogService.getProducts(basket.productIDs);
-    console.log('test');
     return await this.paymentsService.createStripeSession(products);
   }
 

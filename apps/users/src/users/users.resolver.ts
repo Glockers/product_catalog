@@ -21,9 +21,7 @@ export class UsersResolver {
     __typename: string;
     id: number;
   }): Promise<User> {
-    console.log('user referance', referance.id);
     const user = await this.findOne(referance.id);
-    console.log(user);
     return user;
   }
 }
