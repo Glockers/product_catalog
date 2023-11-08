@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PaymentsService } from '../payment/payments.service';
 import { Order } from './entities/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BasketService } from '../services/basket.service';
 import { CatalogService } from '../services/catalog.service';
+import Stripe from 'stripe';
 
 @Injectable()
 export class OrderService {
@@ -16,7 +17,12 @@ export class OrderService {
     private readonly catalogService: CatalogService
   ) {}
 
-  async createOrder(order: Order): Promise<Order> {
+  async createOrder(event: Stripe.Event, order: Order): Promise<Order> {
+    try {
+      await this.paymentsService.createEvent(event.id);
+    } catch {
+      throw new BadRequestException('This event was already processed');
+    }
     await this.basketService.clearUserBasket(order.userID);
     return await this.orderRepository.save(order);
   }

@@ -1,1 +1,2 @@
-export const ENV_PATH = './apps/order/.env';
+export const PATH_ENV = './apps/order/.env';
+export const ORDER_TYPE_PATH = './**/orders.graphql';

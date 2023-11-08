@@ -1,10 +1,5 @@
 scalar Date
 
-type StripeSession{
-  id: ID!
-  amount_total: Int!
-  url: String!
-}
 extend type Product {
   id: ID! @external
 }
@@ -20,9 +15,14 @@ type Order{
   dateBuy: Date!
 }
 
+type StripeSession{
+  id: ID!
+  amount_total: Int!
+  url: String!
+}
 
 extend type Query {
-  getOrders: [Order]
+  orders: [Order]
 }
 
 extend type Mutation{

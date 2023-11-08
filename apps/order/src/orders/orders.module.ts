@@ -22,13 +22,13 @@ import { OrdersResolver } from './orders.resolver';
     BasketCommunicationModule,
     TypeOrmModule.forFeature([Order])
   ],
-  controllers: [OrdersController],
   providers: [
     OrderService,
     UserHelper,
     BasketService,
     CatalogService,
     OrdersResolver
-  ]
+  ],
+  controllers: [OrdersController]
 })
 export class OrderModule {}

@@ -13,7 +13,7 @@ export class BasketService {
     });
   }
 
-  async getUserBasket(userID: number) {
+  async getUserBasket(userID: number): Promise<Basket> {
     return await this.basketClient.sentToMicroservice<Basket>(
       GET_BASKET_BY_ID,
       {
