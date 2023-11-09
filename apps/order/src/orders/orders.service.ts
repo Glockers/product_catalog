@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { BasketService } from '../services/basket.service';
 import { CatalogService } from '../services/catalog.service';
 import Stripe from 'stripe';
+import { Basket } from '../types';
 
 @Injectable()
 export class OrderService {
@@ -17,14 +18,18 @@ export class OrderService {
     private readonly catalogService: CatalogService
   ) {}
 
-  async createOrder(event: Stripe.Event, order: Order): Promise<Order> {
+  async createOrder(event: Stripe.Event, order: Basket): Promise<Order> {
     try {
       await this.paymentsService.createEvent(event.id);
     } catch {
       throw new BadRequestException('This event was already processed');
     }
     await this.basketService.clearUserBasket(order.userID);
-    return await this.orderRepository.save(order);
+    return await this.orderRepository.save({
+      dateBuy: new Date(),
+      productsID: order.productIDs,
+      userID: order.userID
+    });
   }
 
   async getStripeSession(userID: number) {

@@ -23,6 +23,8 @@ import {
 } from './queries/handlers';
 import { ProductController } from './product.controller';
 import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
+import { ConfigService } from '@nestjs/config';
 
 export const CommandHandlers = [
   CreateProductHandler,
@@ -45,7 +47,17 @@ export const QueryHandlers = [
     TypeOrmModule.forFeature([Product]),
     CqrsModule,
     MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
-    CacheModule.register()
+    CacheModule.registerAsync({
+      useFactory: async (configService: ConfigService) => {
+        return {
+          isGlobal: true,
+          store: redisStore,
+          host: configService.get<string>('REDIS_HOST'),
+          port: configService.get<string>('REDIS_PORT')
+        };
+      },
+      inject: [ConfigService]
+    })
   ],
   providers: [
     ProductResolver,

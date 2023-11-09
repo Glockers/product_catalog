@@ -7,8 +7,7 @@ import {
 } from '@nestjs/common';
 import { OrderService } from './orders.service';
 import { PaymentsService } from '../payment/payments.service';
-import { RequestWithRawBody } from '../types';
-import { Order } from './entities/order.entity';
+import { Basket, RequestWithRawBody } from '../types';
 
 @Controller()
 export class OrdersController {
@@ -32,7 +31,7 @@ export class OrdersController {
     );
 
     if (event.type === 'checkout.session.completed') {
-      const data = event.data.object as Order;
+      const data = event.data.object as Basket;
       await this.orderService.createOrder(event, data);
     }
   }

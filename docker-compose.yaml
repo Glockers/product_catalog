@@ -5,6 +5,13 @@ services:
       image: rabbitmq
       ports:
         - '5672:5672'
+  redis:
+    container_name: cache
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
   # order:
   #   build:
   #     context: .
@@ -79,9 +86,9 @@ services:
   #     - POSTGRES_PASSWORD=root
   #   volumes:
   #     - catalog_db_data:/var/lib/postgresql/data
-# volumes:
-#   redis:
-#       driver: local
+volumes:
+  redis:
+      driver: local
 #   catalog_db_data:
 #   kibana-data:
 #   user_db_data:

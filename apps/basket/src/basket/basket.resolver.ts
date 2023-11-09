@@ -14,6 +14,9 @@ import { NAME_JWT_COOKIE } from '@app/common/constants/jwt.constants';
 import { Tokens } from 'apps/users/src/auth/types';
 import { UserHelper } from '@app/common/helpers';
 import { CatalogService } from '../services/product.service';
+import { JwtAuthGuard, Roles, RolesGuard } from '@app/common/auth';
+import { Role } from '@app/common/constants';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver('Basket')
 export class BasketResolver {
@@ -23,6 +26,8 @@ export class BasketResolver {
     private readonly catalogService: CatalogService
   ) {}
 
+  @Roles(Role.User)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation('addBasket')
   async create(
     @Cookie(NAME_JWT_COOKIE) jwt: Tokens,
@@ -32,6 +37,8 @@ export class BasketResolver {
     return await this.basketService.add(userID, createBasketInput.id);
   }
 
+  @Roles(Role.User)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation('popBasket')
   async pop(
     @Cookie(NAME_JWT_COOKIE) jwt: Tokens,
@@ -42,6 +49,8 @@ export class BasketResolver {
   }
 
   @Query('getBasket')
+  @Roles(Role.User)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async findAll(@Cookie(NAME_JWT_COOKIE) jwt: Tokens): Promise<Basket> {
     const userID = await this.userHelper.getUserID(jwt);
     const productIds =

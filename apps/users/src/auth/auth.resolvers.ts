@@ -8,8 +8,7 @@ import { HttpStatus, UseGuards } from '@nestjs/common';
 import { NAME_JWT_COOKIE } from './constants';
 import { MessageResponse } from './responses/message.response';
 import { Tokens } from './types';
-import { JwtAuthGuard } from '@app/common';
-import { Roles, RolesGuard } from '@app/common/auth';
+import { JwtAuthGuard, Roles, RolesGuard } from '@app/common/auth';
 import { Role } from '@app/common/constants';
 import { Cookie } from '@app/common/decorator';
 
