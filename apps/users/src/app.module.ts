@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigValidationSchemas } from './schemas';
 import { AuthModule } from './auth/auth.module';
+import { RmqModule } from '@app/common/rmq';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { AuthModule } from './auth/auth.module';
       }
     }),
     UsersModule,
-    AuthModule
+    AuthModule,
+    RmqModule
   ]
 })
 export class AppModule {}

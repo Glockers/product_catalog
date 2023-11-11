@@ -6,7 +6,7 @@ import { CreateProductCommand } from './commands/impl/create-product.command';
 import { ProductsQuery } from './queries/impl/products.query';
 import { UpdateProductCommand } from './commands/impl/update-product.command';
 import { DeleteProductCommand } from './commands/impl/delete-product.command';
-import { ProductByIdQuery } from './queries/impl';
+import { ProductByIdQuery, ProductsByIdQuery } from './queries/impl';
 import { UpdatedProduct } from './types/product.type';
 
 @Injectable()
@@ -28,14 +28,20 @@ export class ProductService {
     );
   }
 
-  async findOne(id: number): Promise<Product> {
+  async findOne(id: number): Promise<Product> | null {
     const product = await this.queryBus.execute<ProductByIdQuery, Product>(
       new ProductByIdQuery(id)
     );
 
-    if (!product) throw new Error('Product not found');
+    if (!product) return null;
 
     return product;
+  }
+
+  async findManyById(productsId: number[]) {
+    return await this.queryBus.execute<ProductsByIdQuery, Product[]>(
+      new ProductsByIdQuery(productsId)
+    );
   }
 
   async remove(id: number) {

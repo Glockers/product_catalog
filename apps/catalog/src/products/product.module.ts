@@ -18,8 +18,13 @@ import {
 } from './events/handlers';
 import {
   ProductsQueryHandler,
-  ProductByIdQueryHandler
+  ProductByIdQueryHandler,
+  ProductsByIdsQueryHandler
 } from './queries/handlers';
+import { ProductController } from './product.controller';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
+import { ConfigService } from '@nestjs/config';
 
 export const CommandHandlers = [
   CreateProductHandler,
@@ -31,13 +36,28 @@ export const EventHandlers = [
   ProductDeleteHandler,
   ProductUpdatedHandler
 ];
-export const QueryHandlers = [ProductByIdQueryHandler, ProductsQueryHandler];
+export const QueryHandlers = [
+  ProductByIdQueryHandler,
+  ProductsQueryHandler,
+  ProductsByIdsQueryHandler
+];
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Product]),
     CqrsModule,
-    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }])
+    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
+    CacheModule.registerAsync({
+      useFactory: async (configService: ConfigService) => {
+        return {
+          isGlobal: true,
+          store: redisStore,
+          host: configService.get<string>('REDIS_HOST'),
+          port: configService.get<string>('REDIS_PORT')
+        };
+      },
+      inject: [ConfigService]
+    })
   ],
   providers: [
     ProductResolver,
@@ -45,6 +65,7 @@ export const QueryHandlers = [ProductByIdQueryHandler, ProductsQueryHandler];
     ...CommandHandlers,
     ...EventHandlers,
     ...QueryHandlers
-  ]
+  ],
+  controllers: [ProductController]
 })
 export class ProductModule {}

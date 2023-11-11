@@ -11,6 +11,7 @@ import { TokenService } from './token.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthSession } from './entities/auth.entity';
 import { IsNull, Not, Repository } from 'typeorm';
+import { Role } from '@app/common/constants';
 
 @Injectable()
 export class AuthService {
@@ -84,6 +85,11 @@ export class AuthService {
     const newTokens = await this.tokenService.getTokens(id);
     await this.saveRefreshToken(id, newTokens.refresh_token);
     return newTokens;
+  }
+
+  async getUserRole(userID: number): Promise<Role> {
+    const { role } = await this.userService.findOneById(userID);
+    return role;
   }
 
   async verfifyRefreshToken(rt: string) {

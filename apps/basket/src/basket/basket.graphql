@@ -1,0 +1,27 @@
+extend type Product {
+  id: ID! @external
+}
+
+extend type User {
+  id: ID! @external
+}
+
+type Basket{
+ user: User!
+ products: [Product]
+}
+
+extend type Query {
+  getBasket: Basket!
+}
+
+
+input ProductInput{
+  id: Int!
+}
+
+extend type Mutation{
+  addBasket(input: ProductInput): Product! 
+  popBasket(input: ProductInput): Product! 
+}
+

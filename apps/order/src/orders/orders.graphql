@@ -1,0 +1,32 @@
+scalar Date
+
+extend type Product {
+  id: ID! @external
+}
+
+extend type User {
+  id: ID! @external
+}
+
+type Order{
+  id: Int!
+ user: User!
+ products: [Product]
+  dateBuy: Date!
+}
+
+type StripeSession{
+  id: ID!
+  amount_total: Int!
+  url: String!
+}
+
+extend type Query {
+  orders: [Order]
+}
+
+extend type Mutation{
+  create_order: StripeSession!
+}
+
+

@@ -1,11 +1,12 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, Directive, ID } from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { IProduct } from '../types/product.interface';
 
 @ObjectType()
 @Entity('products')
+@Directive('@key(fields: "id")')
 export class Product implements IProduct {
-  @Field()
+  @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -16,4 +17,8 @@ export class Product implements IProduct {
   @Field()
   @Column({ type: 'text' })
   description: string;
+
+  @Field()
+  @Column('int')
+  price: number;
 }

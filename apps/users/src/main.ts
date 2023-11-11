@@ -8,10 +8,15 @@ import {
   NAME_SESSION_COOKIE,
   MAXAGE_SESSION_COOKIE
 } from './constants/session';
+import { RmqService } from '@app/common/rmq';
+import { USER_MICROSERVICE_NAME } from '@app/common/constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+  const rmqService = app.get<RmqService>(RmqService);
+
+  app.use(cookieParser());
   app.use(
     session({
       name: NAME_SESSION_COOKIE,
@@ -23,10 +28,11 @@ async function bootstrap() {
       }
     })
   );
-
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(cookieParser());
+
+  app.connectMicroservice(rmqService.getOptions(USER_MICROSERVICE_NAME, true));
+  await app.startAllMicroservices();
 
   await app.listen(configService.get<number>('APP_PORT'));
 }
