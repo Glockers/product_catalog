@@ -11,12 +11,18 @@ import { Product } from './entities/product.entity';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
 import { JwtAuthGuard, Roles, RolesGuard } from '@app/common/auth';
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Role } from '@app/common/constants';
+import { HttpExceptionFilter } from '@app/common/filters';
+import { LoggerService } from '@app/common/logger/logger.service';
 
 @Resolver(() => Product)
+@UseFilters(HttpExceptionFilter)
 export class ProductResolver {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly logger: LoggerService,
+    private readonly productService: ProductService
+  ) {}
 
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -24,14 +30,18 @@ export class ProductResolver {
   createProduct(
     @Args('createProductInput') { ...createProductInput }: CreateProductInput
   ) {
-    return this.productService.create(createProductInput);
+    const result = this.productService.create(createProductInput);
+    this.logger.log('Product created successfully', 'ProductResolver');
+    return result;
   }
 
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => Product)
   async removeProduct(@Args('id', { type: () => Int }) id: number) {
-    return await this.productService.remove(id);
+    const result = await this.productService.remove(id);
+    this.logger.log('Product removed successfully', 'ProductResolver');
+    return result;
   }
 
   @Roles(Role.Admin)
@@ -42,7 +52,9 @@ export class ProductResolver {
     { ...updateCatalogInput }: UpdateProductInput
   ) {
     const { id, ...data } = updateCatalogInput;
-    return this.productService.update(id, data);
+    const result = this.productService.update(id, data);
+    this.logger.log('Product updated successfully', 'ProductResolver');
+    return result;
   }
 
   @Roles(Role.Admin)
