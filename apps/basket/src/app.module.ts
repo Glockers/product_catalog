@@ -10,13 +10,13 @@ import {
 import { RmqModule } from '@app/common/rmq/rmq.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from '../db/typeorm.config';
+import { LoggerModule } from '@app/common/logger/logger.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ENV_PATH
-      // validationSchema: ConfigValidationSchemas
     }),
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
@@ -26,6 +26,7 @@ import { dataSourceOptions } from '../db/typeorm.config';
     TypeOrmModule.forRootAsync({
       useFactory: () => dataSourceOptions
     }),
+    LoggerModule,
     RmqModule,
     BasketModule
   ]
