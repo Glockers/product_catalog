@@ -16,10 +16,12 @@ import { UserHelper } from '@app/common/helpers';
 import { CatalogService } from '../services/product.service';
 import { JwtAuthGuard, Roles, RolesGuard } from '@app/common/auth';
 import { Role } from '@app/common/constants';
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { LoggerService } from '@app/common/logger/logger.service';
+import { HttpExceptionFilter } from '@app/common/filters';
 
 @Resolver('Basket')
+@UseFilters(HttpExceptionFilter)
 export class BasketResolver {
   constructor(
     private userHelper: UserHelper,
