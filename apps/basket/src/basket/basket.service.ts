@@ -1,22 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common';
 import { IProduct } from './types';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Basket } from './entities/basket.entity';
 import { Repository } from 'typeorm';
 import { CatalogService } from '../services/product.service';
+import { LoggerService } from '@app/common/logger/logger.service';
 
 @Injectable()
 export class BasketService {
   constructor(
     @InjectRepository(Basket)
     private basketRepository: Repository<Basket>,
-    private readonly catalogService: CatalogService
+    private readonly catalogService: CatalogService,
+    private readonly logger: LoggerService
   ) {}
 
   async add(userID: number, productID: number): Promise<IProduct> {
     const productInfo = await this.catalogService.getProduct(productID);
 
-    if (!productInfo) throw new Error('Product not found');
+    if (!productInfo) {
+      this.logger.error('Product not found', 'BasketService');
+      throw new NotFoundException('Product not found');
+    }
 
     const userBasket = await this.getBasketById(userID);
     if (!userBasket)
@@ -25,8 +34,10 @@ export class BasketService {
         productIDs: [productID]
       });
 
-    if (userBasket.productIDs.includes(productID))
-      throw new Error('this product is already add');
+    if (userBasket.productIDs.includes(productID)) {
+      this.logger.error('this product is already add', 'BasketService');
+      throw new BadRequestException('this product is already add');
+    }
 
     this.basketRepository.update(
       {
@@ -58,13 +69,21 @@ export class BasketService {
   async removeProduct(userID: number, productID: number) {
     const productInfo = await this.catalogService.getProduct(productID);
 
-    if (!productInfo) throw new Error('Product not found');
+    if (!productInfo) {
+      this.logger.error('Product not found', 'BasketService');
+      throw new NotFoundException('Product not found');
+    }
 
     const userBasket = await this.getBasketById(userID);
 
-    if (!userBasket) throw new Error('Basket not found');
-    if (!userBasket.productIDs.includes(productID))
-      throw new Error('Product not found in basket');
+    if (!userBasket) {
+      this.logger.error('Basket not found', 'BasketService');
+      throw new NotFoundException('Basket not found');
+    }
+    if (!userBasket.productIDs.includes(productID)) {
+      this.logger.error('Product not found in basket', 'BasketService');
+      throw new NotFoundException('Product not found in basket');
+    }
 
     this.basketRepository.update(
       {

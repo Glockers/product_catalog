@@ -11,6 +11,7 @@ import {
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from '../db/typeorm.config';
 import { ConfigValidationSchemas } from './schemas/main.schema';
+import { LoggerModule } from '@app/common/logger/logger.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { ConfigValidationSchemas } from './schemas/main.schema';
       useFactory: () => dataSourceOptions
     }),
     OrderModule,
-    RmqModule
+    RmqModule,
+    LoggerModule
   ]
 })
 export class AppModule {}

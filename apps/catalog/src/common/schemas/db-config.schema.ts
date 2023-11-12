@@ -10,5 +10,6 @@ export const configValidationPgSchema = Joi.object({
 });
 
 export const configValidationMongoSchema = Joi.object({
-  MONGO_URI: Joi.string().required()
+  MONGO_URI: Joi.string().required(),
+  MONGO_LOG: Joi.string().required()
 });

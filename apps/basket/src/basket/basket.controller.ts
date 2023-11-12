@@ -1,9 +1,11 @@
-import { Controller } from '@nestjs/common';
+import { Controller, UseFilters } from '@nestjs/common';
 import { BasketService } from './basket.service';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { CLEAR_BASKET_BY_ID, GET_BASKET_BY_ID } from '@app/common/endpoints';
+import { HttpExceptionFilter } from '@app/common/filters';
 
 @Controller()
+@UseFilters(HttpExceptionFilter)
 export class BasketController {
   constructor(private readonly basketService: BasketService) {}
 

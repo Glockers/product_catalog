@@ -12,6 +12,7 @@ import { dataSourceOptions } from '../db/writable-database.config';
 import { ProductModule } from './products/product.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RmqModule } from '@app/common/rmq/rmq.module';
+import { LoggerModule } from '@app/common/logger/logger.module';
 
 @Module({
   imports: [
@@ -36,7 +37,8 @@ import { RmqModule } from '@app/common/rmq/rmq.module';
       autoSchemaFile: {
         federation: 2
       }
-    })
+    }),
+    LoggerModule
   ]
 })
 export class AppModule {}
